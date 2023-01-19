@@ -22,8 +22,23 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { CurrencyAccountPipe } from './pipe/currency-account.pipe';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { CurrencyAccountFilterPipe } from './pipe/currency-account-filter.pipe';
+import { UserComponent } from './components/user/user.component';
+import { UserPipe } from './pipe/user.pipe';
+import { UserFilterPipe } from './pipe/user-filter.pipe';
+import { UserOperationClaimComponent } from './components/user/user-operation-claim/user-operation-claim.component';
+import { OperationClaimPipe } from './pipe/operation-claim.pipe';
+import { CompanyComponent } from './components/company/company.component';
+import { CompanyPipe } from './pipe/company.pipe';
+import { CompanyFilterPipe } from './pipe/company-filter.pipe';
+import { QuillModule } from 'ngx-quill';
+import { AngularEditorModule } from '@kolkov/angular-editor';
+import { AccountReconciliationComponent } from './components/account-reconciliation/account-reconciliation.component';
+import { AccountReconciliationFilterPipe } from './pipe/account-reconciliation-filter.pipe';
+import { AccountReconciliationPipe } from './pipe/account-reconciliation.pipe';
+import { AccountReconciliationResultComponent } from './components/account-reconciliation/account-reconciliation-result/account-reconciliation-result.component';
+import { MyChartComponent } from './components/my-chart/my-chart.component';
 
-// Hocam buldum galiba confirm component eklememişim
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,7 +51,20 @@ import { CurrencyAccountFilterPipe } from './pipe/currency-account-filter.pipe';
     SidenavComponent,
     CurrencyAccountComponent,
     CurrencyAccountPipe,
-    CurrencyAccountFilterPipe
+    CurrencyAccountFilterPipe,
+    UserComponent,
+    UserPipe,
+    UserFilterPipe,
+    UserOperationClaimComponent,
+    OperationClaimPipe,
+    CompanyComponent,
+    CompanyPipe,
+    CompanyFilterPipe,
+    AccountReconciliationComponent,
+    AccountReconciliationFilterPipe,
+    AccountReconciliationPipe,
+    AccountReconciliationResultComponent,
+    MyChartComponent,
   ],
   imports: [
     CommonModule,
@@ -46,7 +74,9 @@ import { CurrencyAccountFilterPipe } from './pipe/currency-account-filter.pipe';
     ReactiveFormsModule,
     BrowserAnimationsModule, // required animations module
     FormsModule,
+    AngularEditorModule,
     NgxSpinnerModule,
+    QuillModule.forRoot(),
     SweetAlert2Module.forRoot(),
     ToastrModule.forRoot({
       timeOut: 3000,

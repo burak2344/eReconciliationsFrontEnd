@@ -5,9 +5,12 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { CurrencyAccount } from 'src/app/models/currencyAccountModel';
+import { UserOperationClaim } from 'src/app/models/userOperationClaimModel';
 import { UserThemeOption } from 'src/app/models/userThemeOptionModel';
 import { AuthService } from 'src/app/services/auth.service';
 import { CurrencyAccountService } from 'src/app/services/currency-account.service';
+import { UserOperationClaimService } from 'src/app/services/user-operation-claim.service';
+import { UserService } from 'src/app/services/user.service';
 import * as XLSX from 'xlsx';
 
 
@@ -23,6 +26,7 @@ export class CurrencyAccountComponent implements OnInit {
   jwtHelper: JwtHelperService = new JwtHelperService;
 
   currencyAccounts: CurrencyAccount[] = []
+  userOperationCliams: UserOperationClaim[] = []
   currencyAccount: CurrencyAccount = {
     addedAt: "",
     address: "",
@@ -36,6 +40,13 @@ export class CurrencyAccountComponent implements OnInit {
     name: "",
     taxDepartment: "",
     taxIdNumber: ""
+  };
+  userThemeOption:UserThemeOption = {
+    sidenavType: "dark",
+    id:0,
+    mode:"",
+    sidenavColor:"primary",
+    userId:0
   };
 
 
@@ -64,11 +75,11 @@ export class CurrencyAccountComponent implements OnInit {
   email: string;
   authorized: string;
   file:string;
-  operationAdd = true;
-  operationUpdate = true;
-  operationDelete = true;
-  operationGet = true;
-  operationList = true;
+  operationAdd = false;
+  operationUpdate = false;
+  operationDelete = false;
+  operationGet = false;
+  operationList = false;
 
 
 
@@ -79,12 +90,14 @@ export class CurrencyAccountComponent implements OnInit {
     private toastr: ToastrService,
     private formBuilder: FormBuilder,
     private datePipe: DatePipe,
-    //private userOperationClaimService:UserOperationClaimService,
-    //private userService:UserService
+    private userOperationClaimService:UserOperationClaimService,
+    private userService:UserService
   ) { }
 
   ngOnInit(): void {
     this.refresh();
+    this.userOperationClaimGetList()
+    this.getUserTheme();
     this.getlist();
     this.createAddForm();
     this.createUpdateForm();
@@ -105,7 +118,63 @@ export class CurrencyAccountComponent implements OnInit {
   }
 
 
-  getlist() {
+
+
+  userOperationClaimGetList(){
+    this.showSpinner();
+    this.userOperationClaimService.getlist(this.userId,this.companyId).subscribe((res) => {
+      this.userOperationCliams = res.data;
+      this.userOperationCliams.forEach(element => {
+        if (element.operationClaimName == "Admin") {
+          this.operationAdd = true;
+          this.operationUpdate = true;
+          this.operationDelete = true;
+          this.operationGet = true;
+          this.operationList = true;
+        }
+
+        if (element.operationClaimName == "CurrencyAccount.Add") {
+          this.operationAdd = true;
+        }
+
+        if (element.operationClaimName == "CurrencyAccount.Update") {
+          this.operationUpdate = true;
+        }
+
+        if (element.operationClaimName == "CurrencyAccount.Delete") {
+          this.operationDelete = true;
+        }
+
+        if (element.operationClaimName == "CurrencyAccount.Get") {
+          this.operationGet = true;
+        }
+
+        if (element.operationClaimName == "CurrencyAccount.GetList") {
+          this.operationList = true;
+        }
+      });
+
+      //console.log(this.userOperationCliams)
+      this.hideSpinner();
+    }, (err) => {
+      this.toastr.error("Bir hata ile karşılaştık. Biraz sonra tekrar deneyin")
+      //console.log(err)
+      this.hideSpinner();
+    })
+  }
+
+  getUserTheme(){
+    this.showSpinner();
+    this.userService.getTheme(this.userId).subscribe((res)=>{
+      this.userThemeOption = res.data
+      this.hideSpinner();
+    },(err)=>{
+      console.log(err);
+      this.hideSpinner();
+    })
+  }
+
+    getlist() {
     this.showSpinner();
     this.currencyAccountService.getlist(this.companyId).subscribe((res) => {
       this.currencyAccounts = res.data;
@@ -116,6 +185,7 @@ export class CurrencyAccountComponent implements OnInit {
       this.hideSpinner();
     })
   }
+
 
   exportExcel() {
     let element = document.getElementById('excel-table');
